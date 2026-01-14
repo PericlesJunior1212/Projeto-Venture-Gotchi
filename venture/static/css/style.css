@@ -1,0 +1,119 @@
+/* ===== Reset ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Inter", sans-serif;
+}
+
+/* ===== LIGHT / DARK MODE ===== */
+html[data-theme="light"] {
+    --bg: #ffffff;
+    --text: #1a1a1a;
+    --primary: #4a62ff;
+    --danger: #e63946;
+    --card: #f2f4f8;
+}
+
+html[data-theme="dark"] {
+    --bg: #1a1b1f;
+    --text: #e0e0e0;
+    --primary: #7ca7ff;
+    --danger: #ff6e6e;
+    --card: #2a2b31;
+}
+
+/* ===== Body ===== */
+body {
+    background: var(--bg);
+    color: var(--text);
+    transition: 0.3s ease;
+}
+
+/* ===== Navbar ===== */
+.navbar {
+    background: var(--card);
+    padding: 12px 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,.08);
+}
+
+.nav-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.nav-logo {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--primary);
+    text-decoration: none;
+}
+
+.nav-menu {
+    display: flex;
+    gap: 16px;
+}
+
+.nav-item {
+    text-decoration: none;
+    color: var(--text);
+    padding: 6px 10px;
+    border-radius: 6px;
+    transition: 0.3s;
+}
+
+.nav-item:hover {
+    background: var(--primary);
+    color: white;
+}
+
+.nav-danger {
+    color: var(--danger);
+}
+
+/* Toggle button (mobile) */
+.nav-toggle {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 26px;
+    cursor: pointer;
+}
+
+/* ===== Responsividade ===== */
+@media (max-width: 768px) {
+    .nav-toggle {
+        display: block;
+    }
+
+    .nav-menu {
+        display: none;
+        flex-direction: column;
+        margin-top: 10px;
+    }
+
+    .nav-menu.active {
+        display: flex;
+    }
+}
+
+/* ===== Alertas ===== */
+.alert {
+    padding: 10px 15px;
+    border-radius: 4px;
+    margin-bottom: 8px;
+}
+
+.alert.success { background: #dfffdc; color: #206020; }
+.alert.error { background: #ffd6d6; color: #802020; }
+.alert.warning { background: #fff1c2; color: #806000; }
+
+/* ===== Footer ===== */
+.footer {
+    text-align: center;
+    padding: 20px;
+    opacity: 0.6;
+    font-size: 14px;
+    margin-top: 30px;
+}
