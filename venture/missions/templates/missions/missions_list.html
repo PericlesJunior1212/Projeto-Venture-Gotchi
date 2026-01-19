@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Minhas Missões — VentureGotchi{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+
+    <h1 class="fw-bold text-center mb-4">Suas Missões</h1>
+
+    <div class="text-center mb-3">
+        <a href="{% url 'mission_create' %}" class="btn btn-primary">
+            + Criar Nova Missão
+        </a>
+    </div>
+
+    {% if missions %}
+        {% for mission in missions %}
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="fw-bold">{{ mission.title }}</h4>
+
+                        {% if mission.completed %}
+                            <span class="badge bg-success">Concluída</span>
+                        {% else %}
+                            <span class="badge bg-warning text-dark">Em andamento</span>
+                        {% endif %}
+                    </div>
+
+                    <p class="text-muted">{{ mission.description|default:"Sem descrição." }}</p>
+
+                    <p><strong>Progresso:</strong> {{ mission.progress }}%</p>
+
+                    <div class="progress mb-3" style="height: 20px;">
+                        <div class="progress-bar {% if mission.progress == 100 %}bg-success{% else %}bg-info{% endif %}"
+                             role="progressbar"
+                             style="width: {{ mission.progress }}%;">
+                        </div>
+                    </div>
+
+                    <a href="{% url 'mission_detail' mission.id %}" class="btn btn-outline-primary btn-sm">Ver Detalhes</a>
+                    <a href="{% url 'mission_edit' mission.id %}" class="btn btn-outline-warning btn-sm ms-2">Editar</a>
+                    <a href="{% url 'mission_delete' mission.id %}" class="btn btn-outline-danger btn-sm ms-2">Excluir</a>
+
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p class="text-center text-muted">Nenhuma missão cadastrada ainda.</p>
+    {% endif %}
+</div>
+{% endblock %}

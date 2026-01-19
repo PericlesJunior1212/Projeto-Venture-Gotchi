@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Detalhes da Missão{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+
+    <h2 class="fw-bold mb-3">{{ mission.title }}</h2>
+    <p class="text-muted">{{ mission.description }}</p>
+
+    <p><strong>Progresso:</strong> {{ mission.progress }}%</p>
+
+    <div class="progress mb-4" style="height: 22px;">
+        <div class="progress-bar {% if mission.progress == 100 %}bg-success{% endif %}"
+             style="width: {{ mission.progress }}%;">
+        </div>
+    </div>
+
+    <div class="d-flex gap-2 mb-3">
+        <a href="{% url 'mission_edit' mission.id %}" class="btn btn-warning">Editar Missão</a>
+        <a href="{% url 'mission_delete' mission.id %}" class="btn btn-danger">Excluir Missão</a>
+        <a href="{% url 'subtask_create' mission.id %}" class="btn btn-primary">+ Nova Tarefa</a>
+    </div>
+
+    <h4 class="fw-bold mt-4">Tarefas</h4>
+
+    {% for subtask in mission.subtasks.all %}
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <span>
+                {% if subtask.completed %}
+                    <s>{{ subtask.title }}</s>
+                {% else %}
+                    {{ subtask.title }}
+                {% endif %}
+            </span>
+
+            {% if not subtask.completed %}
+                <a href="{% url 'complete_subtask' subtask.id %}" class="btn btn-success btn-sm">
+                    Concluir +{{ subtask.xp_reward }} XP
+                </a>
+            {% else %}
+                <span class="badge bg-secondary">Concluída</span>
+            {% endif %}
+        </div>
+    {% empty %}
+        <p class="text-muted">Nenhuma tarefa cadastrada ainda.</p>
+    {% endfor %}
+</div>
+{% endblock %}
+
