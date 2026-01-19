@@ -5,69 +5,150 @@
 
 {% block content %}
 
-<div class="text-center mb-4">
-    <h1 class="fw-bold">Olá, {{ profile.user.username }} 👋</h1>
-    <p class="text-muted">Bem-vindo ao seu painel de evolução!</p>
-</div>
+<div class="container mt-4">
 
-<div class="row justify-content-center">
-    <div class="col-md-6">
+    
+    <div class="text-center mb-4">
+        <h1 class="fw-bold">Olá, {{ profile.user.username }} 👋</h1>
+        <p class="text-muted">Bem-vindo ao seu painel de evolução!</p>
+    </div>
 
-        <div class="card shadow-sm mb-4">
-            <div class="card-body">
-                <h5 class="card-title fw-bold">Seu Progresso</h5>
+    
+    <div class="row justify-content-center">
+        <div class="col-md-6">
 
-                <p>Nível atual: <strong>{{ profile.level }}</strong></p>
-                <p>XP: <strong>{{ profile.xp }}</strong> / {{ profile.next_level_xp }}</p>
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
 
-                <!-- Barra de progresso Bootstrap -->
-                <div class="progress mb-2" style="height: 25px;">
-                    <div class="progress-bar bg-success fw-bold"
-                         role="progressbar"
-                         style="width: {{ profile.progress_percent }}%;"
-                         aria-valuenow="{{ profile.progress_percent }}"
-                         aria-valuemin="0"
-                         aria-valuemax="100">
-                        {{ profile.progress_percent }}%
+                    <h5 class="card-title fw-bold">Seu Progresso</h5>
+
+                    <p>Nível atual: <strong>{{ profile.level }}</strong></p>
+                    <p>XP: <strong>{{ profile.xp }}</strong> / {{ profile.next_level_xp }}</p>
+
+                    <div class="progress mb-2" style="height: 25px;">
+                        <div class="progress-bar 
+                                {% if profile.progress_percent < 40 %}bg-danger
+                                {% elif profile.progress_percent < 70 %}bg-warning
+                                {% else %}bg-success{% endif %}"
+                             role="progressbar"
+                             style="width: {{ profile.progress_percent }}%;"
+                             aria-valuenow="{{ profile.progress_percent }}"
+                             aria-valuemin="0"
+                             aria-valuemax="100">
+                            {{ profile.progress_percent }}%
+                        </div>
                     </div>
+
                 </div>
             </div>
+
+        </div>
+    </div>
+
+
+    
+    <h3 class="mt-5 mb-3 fw-bold text-center">Suas Missões</h3>
+
+    <div class="text-center mb-3">
+        <a href="{% url 'mission_create' %}" class="btn btn-primary">+ Criar nova missão</a>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+
+            {% if request.user.missions.exists %}
+                {% for mission in request.user.missions.all %}
+
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-body">
+
+                            <h4 class="fw-bold">
+                                <a class="text-decoration-none" href="{% url 'mission_detail' mission.id %}">
+                                    {{ mission.title }}
+                                </a>
+                            </h4>
+
+                            <p class="text-muted">{{ mission.description|default:"Sem descrição." }}</p>
+
+                            <!-- Progresso -->
+                            <p><strong>Progresso:</strong> {{ mission.progress }}%</p>
+
+                            <div class="progress mb-3" style="height: 18px;">
+                                <div class="progress-bar 
+                                        {% if mission.progress == 100 %}bg-success{% else %}bg-info{% endif %}"
+                                     role="progressbar"
+                                     style="width: {{ mission.progress }}%;">
+                                </div>
+                            </div>
+
+                            <!-- Subtarefas -->
+                            <h6 class="fw-bold">Tarefas</h6>
+
+                            {% for subtask in mission.subtasks.all %}
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span>
+                                        {% if subtask.completed %}
+                                            <s>{{ subtask.title }}</s>
+                                        {% else %}
+                                            {{ subtask.title }}
+                                        {% endif %}
+                                    </span>
+
+                                    {% if not subtask.completed %}
+                                        <a href="{% url 'complete_subtask' subtask.id %}" class="btn btn-success btn-sm">
+                                            Concluir +{{ subtask.xp_reward }} XP
+                                        </a>
+                                    {% else %}
+                                        <span class="badge bg-secondary">Concluída</span>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+
+                        </div>
+                    </div>
+
+                {% endfor %}
+
+            {% else %}
+                <p class="text-center text-muted">Você ainda não possui missões cadastradas.</p>
+            {% endif %}
+
+        </div>
+    </div>
+
+
+    <div class="row gy-3 mt-5">
+
+        <div class="col-md-4">
+            <a class="text-decoration-none" href="{% url 'missions_list' %}">
+                <div class="card shadow-sm h-100 text-center p-3">
+                    <img src="{% static 'img/missions_icon.png' %}" class="mb-3" height="60">
+                    <h5>Missões</h5>
+                    <p class="text-muted">Vá para a página completa de missões.</p>
+                </div>
+            </a>
         </div>
 
-    </div>
-</div>
+        <div class="col-md-4">
+            <a class="text-decoration-none" href="#">
+                <div class="card shadow-sm h-100 text-center p-3">
+                    <img src="{% static 'img/achievements_icon.png' %}" class="mb-3" height="60">
+                    <h5>Conquistas</h5>
+                    <p class="text-muted">Desbloqueie badges únicas.</p>
+                </div>
+            </a>
+        </div>
 
-<!-- Cards de Ação -->
-<div class="row gy-3">
+        <div class="col-md-4">
+            <a class="text-decoration-none" href="{% url 'profile' %}">
+                <div class="card shadow-sm h-100 text-center p-3">
+                    <img src="{% static 'img/profile_icon.png' %}" class="mb-3" height="60">
+                    <h5>Perfil</h5>
+                    <p class="text-muted">Gerencie suas informações.</p>
+                </div>
+            </a>
+        </div>
 
-    <div class="col-md-4">
-        <a class="text-decoration-none" href="#">
-            <div class="card shadow-sm h-100 text-center p-3">
-                <img src="{% static 'img/missions_icon.png' %}" class="mb-3" height="60">
-                <h5>Missões</h5>
-                <p class="text-muted">Complete desafios e ganhe XP!</p>
-            </div>
-        </a>
-    </div>
-
-    <div class="col-md-4">
-        <a class="text-decoration-none" href="#">
-            <div class="card shadow-sm h-100 text-center p-3">
-                <img src="{% static 'img/achievements_icon.png' %}" class="mb-3" height="60">
-                <h5>Conquistas</h5>
-                <p class="text-muted">Desbloqueie badges únicas.</p>
-            </div>
-        </a>
-    </div>
-
-    <div class="col-md-4">
-        <a class="text-decoration-none" href="{% url 'profile' %}">
-            <div class="card shadow-sm h-100 text-center p-3">
-                <img src="{% static 'img/profile_icon.png' %}" class="mb-3" height="60">
-                <h5>Perfil</h5>
-                <p class="text-muted">Gerencie suas informações.</p>
-            </div>
-        </a>
     </div>
 
 </div>
