@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+
+    <h2 class="mb-4">👋 Olá, {{ user.username }}</h2>
+
+    <!-- STATUS -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card text-center shadow">
+                <div class="card-body">
+                    <h5>XP</h5>
+                    <h3>{{ xp }}</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card text-center shadow">
+                <div class="card-body">
+                    <h5>Nível</h5>
+                    <h3>{{ level }}</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card text-center shadow">
+                <div class="card-body">
+                    <h5>Progresso</h5>
+                    <div class="progress">
+                        <div class="progress-bar" style="width: {{ xp|divisibleby:100 }}%">
+                            {{ xp }} XP
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MISSÕES -->
+    <h4 class="mb-3">🚀 Missões Ativas</h4>
+
+    {% if missions %}
+        {% for mission in missions %}
+            <div class="card mb-3 shadow-sm">
+                <div class="card-body">
+                    <h5>{{ mission.title }}</h5>
+                    <p>{{ mission.description }}</p>
+                    <a href="#" class="btn btn-primary btn-sm">Ver missão</a>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p class="text-muted">Você não tem missões ativas.</p>
+    {% endif %}
+
+</div>
+{% endblock %}

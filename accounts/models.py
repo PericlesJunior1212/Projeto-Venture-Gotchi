@@ -66,3 +66,11 @@ class User(AbstractUser):
 
     def __str__(self):
         return f"{self.username} (Level {self.level})"
+    
+    
+class User(AbstractUser):
+    xp = models.IntegerField(default=0)
+
+    @property
+    def level(self):
+        return self.xp // 100 + 1
