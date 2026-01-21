@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
 from django.core.cache import cache
+from .models import User
 
 
 class LoginForm(AuthenticationForm):
@@ -45,3 +46,14 @@ class LoginForm(AuthenticationForm):
                 "Sua conta está desativada. Entre em contato com o suporte.",
                 code='inactive'
             )
+
+class ProfileForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ["bio", "interests", "avatar"]
+        widgets = {
+            "bio": forms.Textarea(attrs={"class": "form-control", "rows": 4, "placeholder": "Escreva sua bio..."}),
+            "interests": forms.Textarea(attrs={"class": "form-control", "rows": 3, "placeholder": "Ex: Django, UX, inglês..."}),
+        }
+
+    avatar = forms.ImageField(required=False, widget=forms.ClearableFileInput(attrs={"class": "form-control"}))

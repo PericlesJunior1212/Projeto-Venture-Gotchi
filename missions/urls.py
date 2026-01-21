@@ -6,7 +6,8 @@ from .views import (
     mission_edit,
     mission_delete,
     subtask_create,
-    complete_subtask
+    complete_subtask,
+    create_mission
 )
 
 urlpatterns = [
@@ -17,4 +18,5 @@ urlpatterns = [
     path('<int:mission_id>/excluir/', mission_delete, name='mission_delete'),
     path('<int:mission_id>/subtask/add/', subtask_create, name='subtask_create'),
     path('subtask/<int:subtask_id>/concluir/', complete_subtask, name='complete_subtask'),
+    path("create/", create_mission, name="create_mission"),
 ]

@@ -76,6 +76,8 @@
                 {% if mission.description %}
                     <p class="text-muted mb-3">{{ mission.description }}</p>
                 {% endif %}
+                <span class="badge bg-light text-dark">{{ mission.get_mission_type_display }}</span>
+                <span class="badge bg-light text-dark">{{ mission.get_track_display }}</span>
 
                 <div class="mb-2">
                     <small class="text-muted">Tarefas:</small>

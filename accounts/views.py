@@ -1,9 +1,11 @@
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 import logging
+from django.contrib import messages
+from .forms import ProfileForm
 
 logger = logging.getLogger(__name__)
 
@@ -92,7 +94,7 @@ class HomeView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         user = self.request.user
 
-       
+    
         xp = getattr(user, 'xp', 0)
         level = getattr(user, 'level', 1)
         
@@ -146,3 +148,22 @@ class ProfileView(LoginRequiredMixin, TemplateView):
         logger.info(f"PERFIL ACESSADO → usuário: {user.username}")
 
         return context
+
+@login_required
+def profile_view(request):
+    return render(request, "accounts/profile.html")
+
+@login_required
+def profile_edit(request):
+    user = request.user
+
+    if request.method == "POST":
+        form = ProfileForm(request.POST, request.FILES, instance=user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Perfil atualizado com sucesso!")
+            return redirect("profile")
+    else:
+        form = ProfileForm(instance=user)
+
+    return render(request, "accounts/profile_edit.html", {"form": form})

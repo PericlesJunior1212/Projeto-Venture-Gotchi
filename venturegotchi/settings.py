@@ -8,6 +8,8 @@ import dj_database_url
 from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
 
 # Carrega variáveis do .env local (não obrigatório no Render)
 load_dotenv(BASE_DIR / ".env")

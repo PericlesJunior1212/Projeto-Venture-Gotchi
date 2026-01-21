@@ -49,3 +49,8 @@ class User(AbstractUser):
 
     def __str__(self):
         return f"{self.username} (Level {self.level})"
+
+tech = models.PositiveIntegerField(default=0)
+creativity = models.PositiveIntegerField(default=0)
+discipline = models.PositiveIntegerField(default=0)
+leadership = models.PositiveIntegerField(default=0)

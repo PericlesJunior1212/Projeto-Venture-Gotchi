@@ -3,8 +3,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db import transaction
 from django.utils import timezone
-from accounts.util import update_xp
 from .models import Mission, SubTask
+from .forms import MissionForm
 
 
 
@@ -119,7 +119,8 @@ def complete_subtask(request, subtask_id):
 
     # Recompensa XP pela subtarefa
     xp_gained = subtask.xp_reward
-    update_xp(request.user, xp_gained)
+    request.user.add_xp(xp_gained)
+
 
     messages.success(request, f"Tarefa concluída! Você ganhou {xp_gained} XP!")
 
@@ -135,3 +136,21 @@ def complete_subtask(request, subtask_id):
         messages.success(request, f"Parabéns! Você completou a missão e ganhou +{mission.mission_xp} XP extra!")
 
     return redirect('mission_detail', mission.id)
+
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from .forms import MissionForm
+
+@login_required
+def create_mission(request):
+    if request.method == "POST":
+        form = MissionForm(request.POST)
+        if form.is_valid():
+            mission = form.save(commit=False)
+            mission.user = request.user
+            mission.save()
+            return redirect("dashboard")
+    else:
+        form = MissionForm()
+
+    return render(request, "missions/create.html", {"form": form})

@@ -1,0 +1,44 @@
+    {% extends "base.html" %}
+    {% block content %}
+    <div class="container py-4">
+    <h3 class="mb-3">Nova Missão</h3>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="mb-3">
+            <label class="form-label">Título</label>
+            {{ form.title }}
+            </div>
+
+            <div class="mb-3">
+            <label class="form-label">Descrição</label>
+            {{ form.description }}
+            </div>
+
+            <div class="row">
+            <div class="col-md-4 mb-3">
+                <label class="form-label">Prazo</label>
+                {{ form.deadline }}
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <label class="form-label">Tipo</label>
+                {{ form.mission_type }}
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <label class="form-label">Trilha</label>
+                {{ form.track }}
+            </div>
+            </div>
+
+            <button class="btn btn-success">Criar</button>
+            <a href="/dashboard/" class="btn btn-secondary">Cancelar</a>
+        </form>
+        </div>
+    </div>
+    </div>
+    {% endblock %}
