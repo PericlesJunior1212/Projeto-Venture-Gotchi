@@ -2,6 +2,7 @@ from django import forms
 from django.contrib.auth.forms import AuthenticationForm
 from django.core.cache import cache
 from .models import User
+from django.contrib.auth.forms import UserCreationForm
 
 
 class LoginForm(AuthenticationForm):
@@ -57,3 +58,19 @@ class ProfileForm(forms.ModelForm):
         }
 
     avatar = forms.ImageField(required=False, widget=forms.ClearableFileInput(attrs={"class": "form-control"}))
+    
+
+
+class RegisterForm(UserCreationForm):
+    email = forms.EmailField(required=True, widget=forms.EmailInput(attrs={"class": "form-control"}))
+
+    class Meta:
+        model = User
+        fields = ("username", "email", "password1", "password2")
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["username"].widget.attrs.update({"class": "form-control"})
+        self.fields["password1"].widget.attrs.update({"class": "form-control"})
+        self.fields["password2"].widget.attrs.update({"class": "form-control"})
+   
