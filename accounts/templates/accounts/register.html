@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h3 class="text-center mb-4">Criar conta</h3>
+
+          <form method="post" novalidate>
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+              <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+            {% endif %}
+
+            <div class="mb-3">
+              <label class="form-label">Usuário</label>
+              {{ form.username }}
+              {% for error in form.username.errors %}
+                <div class="text-danger small">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">E-mail</label>
+              {{ form.email }}
+              {% for error in form.email.errors %}
+                <div class="text-danger small">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Senha</label>
+              {{ form.password1 }}
+              {% for error in form.password1.errors %}
+                <div class="text-danger small">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Confirmar senha</label>
+              {{ form.password2 }}
+              {% for error in form.password2.errors %}
+                <div class="text-danger small">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <button class="btn btn-success w-100">Cadastrar</button>
+
+            <div class="text-center mt-3">
+              <a href="{% url 'login' %}">Já tenho conta</a>
+            </div>
+          </form>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
