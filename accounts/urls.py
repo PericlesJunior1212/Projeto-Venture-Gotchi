@@ -7,7 +7,7 @@ from .views import BootstrapLoginView
 from .views import register_view
 
 urlpatterns = [
-     path(
+    path(
         "password_reset/",
         auth_views.PasswordResetView.as_view(
             template_name="accounts/password_reset.html",
@@ -48,6 +48,7 @@ urlpatterns = [
     path("profile/", ProfileView.as_view(), name="profile"),
     path("profile/edit/", profile_edit, name="profile_edit"),
     path("login/", BootstrapLoginView.as_view(), name="login"),
+    path("register/", register_view, name="register"),
     path("register/", register_view, name="register"),
 
 

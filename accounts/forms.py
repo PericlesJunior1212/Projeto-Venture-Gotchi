@@ -1,5 +1,5 @@
 from django import forms
-from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.core.cache import cache
 from .models import User
 from django.contrib.auth.forms import UserCreationForm
@@ -62,7 +62,10 @@ class ProfileForm(forms.ModelForm):
 
 
 class RegisterForm(UserCreationForm):
-    email = forms.EmailField(required=True, widget=forms.EmailInput(attrs={"class": "form-control"}))
+    email = forms.EmailField(
+        required=True,
+        widget=forms.EmailInput(attrs={"class": "form-control", "placeholder": "Digite seu e-mail"})
+    )
 
     class Meta:
         model = User
@@ -70,7 +73,9 @@ class RegisterForm(UserCreationForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields["username"].widget.attrs.update({"class": "form-control"})
+        self.fields["username"].widget.attrs.update({"class": "form-control", "placeholder": "Crie um usuário"})
         self.fields["password1"].widget.attrs.update({"class": "form-control"})
         self.fields["password2"].widget.attrs.update({"class": "form-control"})
-   
+
+    
+    

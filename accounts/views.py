@@ -8,7 +8,7 @@ from django.contrib import messages
 from .forms import ProfileForm
 from django.contrib.auth.views import LoginView
 from .forms import RegisterForm
-
+from django.contrib.auth import login
 
 logger = logging.getLogger(__name__)
 
@@ -185,6 +185,9 @@ class BootstrapLoginView(LoginView):
 
 
 def register_view(request):
+    if request.user.is_authenticated:
+        return redirect("dashboard")
+    
     if request.method == "POST":
         form = RegisterForm(request.POST)
         if form.is_valid():

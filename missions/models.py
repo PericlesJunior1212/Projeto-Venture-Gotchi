@@ -61,3 +61,21 @@ class SubTask(models.Model):
 
     def __str__(self):
         return self.title
+
+
+    def complete(self):
+        """Marca como concluída e dá XP ao usuário."""
+        if self.completed:
+            return
+        self.completed = True
+        self.save(update_fields=["completed"])
+
+        # dá XP ao dono da missão
+        user = self.mission.user
+        # se seu User tem add_xp, use:
+        if hasattr(user, "add_xp"):
+            user.add_xp(self.xp_reward)
+        else:
+            # fallback: soma direto
+            user.xp += self.xp_reward
+            user.save(update_fields=["xp"])
