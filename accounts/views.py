@@ -5,9 +5,8 @@ from django.views.generic import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 import logging
 from django.contrib import messages
-from .forms import ProfileForm
+from .forms import ProfileForm, RegisterForm
 from django.contrib.auth.views import LoginView
-from .forms import RegisterForm
 from django.contrib.auth import login
 
 logger = logging.getLogger(__name__)
@@ -146,7 +145,16 @@ class ProfileView(LoginRequiredMixin, TemplateView):
 
 @login_required
 def profile_view(request):
-    return render(request, "accounts/profile.html")
+    if request.method == "POST":
+        form = ProfileForm(request.POST, request.FILES, instance=request.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Perfil atualizado!")
+            return redirect("profile")
+    else:
+        form = ProfileForm(instance=request.user)
+
+    return render(request, "accounts/profile.html", {"form": form})
 
 @login_required
 def profile_edit(request):

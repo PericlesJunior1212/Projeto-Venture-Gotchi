@@ -3,7 +3,7 @@ from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.core.cache import cache
 from .models import User
 from django.contrib.auth.forms import UserCreationForm
-
+from django.contrib.auth import get_user_model
 
 class LoginForm(AuthenticationForm):
     """
@@ -77,5 +77,15 @@ class RegisterForm(UserCreationForm):
         self.fields["password1"].widget.attrs.update({"class": "form-control"})
         self.fields["password2"].widget.attrs.update({"class": "form-control"})
 
-    
-    
+User = get_user_model()
+
+class ProfileForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ["bio", "interests", "avatar"]
+        widgets = {
+            "bio": forms.Textarea(attrs={"class": "form-control", "rows": 4}),
+            "interests": forms.Textarea(attrs={"class": "form-control", "rows": 3}),
+        }
+
+

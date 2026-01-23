@@ -1,10 +1,9 @@
 from django.urls import path
 from . import views
 from django.contrib.auth.views import LoginView, LogoutView
-from .views import HomeView,ProfileView, profile_edit, BootstrapLoginView
+from .views import HomeView,ProfileView, profile_edit, BootstrapLoginView, register_view, profile_view
 from django.contrib.auth import views as auth_views
-from .views import BootstrapLoginView
-from .views import register_view
+
 
 urlpatterns = [
     path(
@@ -49,7 +48,7 @@ urlpatterns = [
     path("profile/edit/", profile_edit, name="profile_edit"),
     path("login/", BootstrapLoginView.as_view(), name="login"),
     path("register/", register_view, name="register"),
-    path("register/", register_view, name="register"),
+    path("profile/", profile_view, name="profile"),
 
 
     ]
