@@ -5,12 +5,13 @@ from django.db import transaction
 from django.utils import timezone
 from .models import Mission, SubTask
 from .forms import MissionForm, SubTaskForm
-
+from django.views.decorators.http import require_POST
 
 
 @login_required
 def mission_detail(request, mission_id):
     mission = get_object_or_404(Mission, id=mission_id, user=request.user)
+
     subtasks = mission.subtasks.all().order_by("id")
 
     if request.method == "POST":
@@ -18,9 +19,16 @@ def mission_detail(request, mission_id):
         if subtask_form.is_valid():
             subtask = subtask_form.save(commit=False)
             subtask.mission = mission
+
+            
+            if subtask.xp_reward is None:
+                subtask.xp_reward = 10
+
             subtask.save()
             messages.success(request, "Subtarefa adicionada!")
             return redirect("mission_detail", mission_id=mission.id)
+        else:
+            messages.error(request, "Erro ao adicionar subtarefa. Verifique os campos.")
     else:
         subtask_form = SubTaskForm()
 
@@ -29,31 +37,6 @@ def mission_detail(request, mission_id):
         "missions/mission_detail.html",
         {"mission": mission, "subtasks": subtasks, "subtask_form": subtask_form},
     )
-
-
-
-@login_required
-def mission_detail(request, mission_id):
-    mission = get_object_or_404(Mission, id=mission_id, user=request.user)
-    subtasks = mission.subtasks.all().order_by("id")
-
-    if request.method == "POST":
-        subtask_form = SubTaskForm(request.POST)
-        if subtask_form.is_valid():
-            subtask = subtask_form.save(commit=False)
-            subtask.mission = mission
-            subtask.save()
-            messages.success(request, "Subtarefa adicionada!")
-            return redirect("mission_detail", mission_id=mission.id)
-    else:
-        subtask_form = SubTaskForm()
-
-    return render(
-        request,
-        "missions/mission_detail.html",
-        {"mission": mission, "subtasks": subtasks, "subtask_form": subtask_form},
-    )
-
 
 
 @login_required
@@ -126,40 +109,23 @@ def subtask_create(request, mission_id):
     })
 
 
+
 @login_required
+@require_POST
 @transaction.atomic
 def complete_subtask(request, subtask_id):
     subtask = get_object_or_404(SubTask, id=subtask_id, mission__user=request.user)
 
-    # Evita xp repetido
+    # evita XP repetido
     if subtask.completed:
         messages.info(request, "Essa subtarefa já foi concluída.")
-        return redirect('mission_detail', subtask.mission.id)
+        return redirect("mission_detail", mission_id=subtask.mission.id)
 
-    # Marca subtarefa como feita
-    subtask.completed = True
-    subtask.completed_at = timezone.now()
-    subtask.save()
+    # usa a regra de negócio central (XP + stats se existir)
+    subtask.complete()
 
-    # Recompensa XP pela subtarefa
-    xp_gained = subtask.xp_reward
-    request.user.add_xp(xp_gained)
-
-
-    messages.success(request, f"Tarefa concluída! Você ganhou {xp_gained} XP!")
-
-    mission = subtask.mission
-
-    # Se a missão chegou a 100%, finaliza
-    if mission.progress == 100:
-        mission.completed = True
-        mission.completed_at = timezone.now()
-        mission.save()
-
-        update_xp(request.user, mission.mission_xp)
-        messages.success(request, f"Parabéns! Você completou a missão e ganhou +{mission.mission_xp} XP extra!")
-
-    return redirect('mission_detail', mission.id)
+    messages.success(request, f"Subtarefa concluída! Você ganhou {subtask.xp_reward or 10} XP ✅")
+    return redirect("mission_detail", mission_id=subtask.mission.id)
 
 
 @login_required
