@@ -1,8 +1,8 @@
 from django.db import models
 from django.conf import settings
+from dashboard.models import Achievement
 
 
-# ====== Choices ======
 MISSION_TYPE = [
     ("daily", "Diária"),
     ("weekly", "Semanal"),
@@ -17,7 +17,7 @@ TRACKS = [
 ]
 
 
-# ====== Models ======
+
 class Mission(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -70,12 +70,21 @@ class SubTask(models.Model):
         self.completed = True
         self.save(update_fields=["completed"])
 
-        # dá XP ao dono da missão
         user = self.mission.user
-        # se seu User tem add_xp, use:
+        
         if hasattr(user, "add_xp"):
             user.add_xp(self.xp_reward)
         else:
-            # fallback: soma direto
+            
             user.xp += self.xp_reward
             user.save(update_fields=["xp"])
+        
+        Achievement.objects.get_or_create(
+            user=user,
+            code="first_xp",
+            defaults={
+                "title": "Primeiro XP!",
+                "description": "Você ganhou XP pela primeira vez."
+    }
+)
+    
