@@ -4,48 +4,72 @@ from django.contrib import messages
 from django.db import transaction
 from django.utils import timezone
 from .models import Mission, SubTask
-from .forms import MissionForm
-
-
-
-@login_required
-def missions_list(request):
-    missions = request.user.missions.all().order_by('-created_at')
-    return render(request, 'missions/missions_list.html', {
-        'missions': missions
-    })
+from .forms import MissionForm, SubTaskForm
 
 
 
 @login_required
 def mission_detail(request, mission_id):
     mission = get_object_or_404(Mission, id=mission_id, user=request.user)
+    subtasks = mission.subtasks.all().order_by("id")
 
-    return render(request, 'missions/mission_detail.html', {
-        'mission': mission,
-        'subtasks': mission.subtasks.order_by('completed', 'created_at')
-    })
+    if request.method == "POST":
+        subtask_form = SubTaskForm(request.POST)
+        if subtask_form.is_valid():
+            subtask = subtask_form.save(commit=False)
+            subtask.mission = mission
+            subtask.save()
+            messages.success(request, "Subtarefa adicionada!")
+            return redirect("mission_detail", mission_id=mission.id)
+    else:
+        subtask_form = SubTaskForm()
+
+    return render(
+        request,
+        "missions/mission_detail.html",
+        {"mission": mission, "subtasks": subtasks, "subtask_form": subtask_form},
+    )
+
+
+
+@login_required
+def mission_detail(request, mission_id):
+    mission = get_object_or_404(Mission, id=mission_id, user=request.user)
+    subtasks = mission.subtasks.all().order_by("id")
+
+    if request.method == "POST":
+        subtask_form = SubTaskForm(request.POST)
+        if subtask_form.is_valid():
+            subtask = subtask_form.save(commit=False)
+            subtask.mission = mission
+            subtask.save()
+            messages.success(request, "Subtarefa adicionada!")
+            return redirect("mission_detail", mission_id=mission.id)
+    else:
+        subtask_form = SubTaskForm()
+
+    return render(
+        request,
+        "missions/mission_detail.html",
+        {"mission": mission, "subtasks": subtasks, "subtask_form": subtask_form},
+    )
 
 
 
 @login_required
 def mission_create(request):
-    if request.method == 'POST':
-        title = request.POST.get('title')
-        description = request.POST.get('description', '')
+    if request.method == "POST":
+        form = MissionForm(request.POST)
+        if form.is_valid():
+            mission = form.save(commit=False)
+            mission.user = request.user
+            mission.save()
+            messages.success(request, "Missão criada! Agora adicione subtarefas.")
+            return redirect("mission_detail", mission_id=mission.id)
+    else:
+        form = MissionForm()
 
-        Mission.objects.create(
-            user=request.user,
-            title=title,
-            description=description
-        )
-
-        messages.success(request, "Missão criada com sucesso!")
-        return redirect('missions_list')
-
-    return render(request, 'missions/mission_create.html')
-
-
+    return render(request, "missions/mission_create.html", {"form": form})
 
 @login_required
 def mission_edit(request, mission_id):
@@ -137,9 +161,6 @@ def complete_subtask(request, subtask_id):
 
     return redirect('mission_detail', mission.id)
 
-from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
-from .forms import MissionForm
 
 @login_required
 def create_mission(request):

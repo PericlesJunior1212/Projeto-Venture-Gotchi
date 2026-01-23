@@ -1,5 +1,5 @@
 from django import forms
-from .models import Mission
+from .models import Mission, SubTask
 
 class MissionForm(forms.ModelForm):
     class Meta:
@@ -11,4 +11,13 @@ class MissionForm(forms.ModelForm):
             "deadline": forms.DateInput(attrs={"type": "date", "class": "form-control"}),
             "mission_type": forms.Select(attrs={"class": "form-select"}),
             "track": forms.Select(attrs={"class": "form-select"}),
+        }
+
+class SubTaskForm(forms.ModelForm):
+    class Meta:
+        model = SubTask
+        fields = ["title", "xp_reward"]
+        widgets = {
+            "title": forms.TextInput(attrs={"class": "form-control"}),
+            "xp_reward": forms.NumberInput(attrs={"class": "form-control", "min": 1}),
         }
