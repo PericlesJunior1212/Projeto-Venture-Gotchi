@@ -50,11 +50,10 @@ class Mission(models.Model):
 
 class SubTask(models.Model):
     mission = models.ForeignKey(
-        Mission,
+        "Mission",
         on_delete=models.CASCADE,
         related_name="subtasks"
     )
-
     title = models.CharField(max_length=120)
     xp_reward = models.PositiveIntegerField(default=10)
     completed = models.BooleanField(default=False)
@@ -62,23 +61,51 @@ class SubTask(models.Model):
     def __str__(self):
         return self.title
 
-
     def complete(self):
-        """Marca como concluída e dá XP ao usuário."""
+        """Marca como concluída, dá XP e (se existir) aumenta status do Gotchi baseado na trilha."""
         if self.completed:
             return
+
+        # marca como concluída
         self.completed = True
         self.save(update_fields=["completed"])
 
         user = self.mission.user
-        
-        if hasattr(user, "add_xp"):
-            user.add_xp(self.xp_reward)
+
+        # --- XP ---
+        amount = self.xp_reward or 10
+
+        if hasattr(user, "add_xp") and callable(getattr(user, "add_xp")):
+            user.add_xp(amount)
         else:
+            # fallback simples
+            if hasattr(user, "xp"):
+                user.xp = (user.xp or 0) + amount
+                user.save(update_fields=["xp"])
+
+        # --- STATS (opcional, só se o User tiver esses campos) ---
+        track_to_field = {
+            "prog": "tech",
+            "ux": "creativity",
+            "biz": "leadership",
+            "soft": "discipline",
+        }
+        field = track_to_field.get(getattr(self.mission, "track", None))
+
+        # ganho de status
+        base_stat_gain = 2
+        type_bonus = {"daily": 0, "weekly": 1, "monthly": 2}.get(getattr(self.mission, "mission_type", "daily"), 0)
+        stat_gain = base_stat_gain + type_bonus
+
+        # só aplica se o campo existir no model User
+        if field and hasattr(user, field):
+            current = getattr(user, field) or 0
+            new_value = min(100, current + stat_gain)
+            setattr(user, field, new_value)
+
+            # aqui é o ponto que costuma quebrar se o campo não existe
+            user.save(update_fields=[field])
             
-            user.xp += self.xp_reward
-            user.save(update_fields=["xp"])
-        
         Achievement.objects.get_or_create(
             user=user,
             code="first_xp",
