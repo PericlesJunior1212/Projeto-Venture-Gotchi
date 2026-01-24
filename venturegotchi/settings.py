@@ -14,12 +14,17 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 load_dotenv(BASE_DIR / ".env")
 
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
+SECRET_KEY = os.environ.get('SECRET_KEY', 'uma-chave-secreta-para-desenvolvimento')  # O Render irá gerar uma automaticamente
 
 
 SECRET_KEY = os.getenv("SECRET_KEY", "chave-insegura-fallback")
 
-DEBUG = os.getenv("DEBUG", "False") == "True"
-
+DEBUG = os.getenv("DEBUG", "False") == "True"   
+ALLOWED_HOSTS = []
+RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
+if RENDER_EXTERNAL_HOSTNAME:
+    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
 # ALLOWED_HOSTS configurado para Render
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",")
 if not ALLOWED_HOSTS or ALLOWED_HOSTS == ['']:
@@ -52,15 +57,11 @@ AUTH_USER_MODEL = 'accounts.User'
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
-
     "django.contrib.sessions.middleware.SessionMiddleware",   # <-- TEM QUE ESTAR AQUI
     "django.middleware.common.CommonMiddleware",
-
     "django.middleware.csrf.CsrfViewMiddleware",
-
     "django.contrib.auth.middleware.AuthenticationMiddleware", # <-- DEPOIS DO SessionMiddleware
     "django.contrib.messages.middleware.MessageMiddleware",
-
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
@@ -96,10 +97,9 @@ DATABASE_URL = os.getenv("DATABASE_URL")
 if not DATABASE_URL:
     
     DATABASES = {
-        "default": dj_database_url.config(
-            default=os.getenv("DATABASE_URL", "sqlite:///db.sqlite3"),
-            conn_max_age=600,
-            ssl_require=False,
+    'default': dj_database_url.config(
+        default='sqlite:///db.sqlite3',  # Usa SQLite localmente
+        conn_max_age=600
     )
 }
 
@@ -114,6 +114,7 @@ else:
     }
 
 
+ALLOWED_HOSTS = ["*", ".onrender.com"]
 
 
 
@@ -136,10 +137,13 @@ USE_TZ = True
 
 
 
+STATIC_URL = '/static/'
 
-STATIC_URL = "/static/"
-STATICFILES_DIRS = [BASE_DIR / "static"]
-STATIC_ROOT = BASE_DIR / "staticfiles"
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
