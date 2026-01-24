@@ -127,10 +127,10 @@ def complete_subtask(request, subtask_id):
     before_level = user.level
     mission = subtask.mission
 
-    # completa usando a regra do model
+    
     xp_gained = subtask.complete()
 
-    # histórico: subtarefa concluída
+ 
     ActivityEvent.objects.create(
         user=user,
         event_type="subtask_completed",
@@ -139,7 +139,7 @@ def complete_subtask(request, subtask_id):
         track=mission.track,
     )
 
-    # conquista: primeiro XP / primeira subtarefa
+
     Achievement.objects.get_or_create(
         user=user,
         code="first_subtask",
@@ -149,7 +149,7 @@ def complete_subtask(request, subtask_id):
         },
     )
 
-    # se subiu de nível, registra no histórico + conquista
+ 
     user.refresh_from_db(fields=["level", "xp"])
     if user.level > before_level:
         ActivityEvent.objects.create(
@@ -170,13 +170,13 @@ def complete_subtask(request, subtask_id):
                 },
             )
 
-    # se missão chegou em 100%, conclui e dá bônus
+    
     mission.refresh_from_db()
     if mission.progress == 100 and not mission.completed:
         mission.completed = True
         mission.save(update_fields=["completed"])
 
-        # bônus de XP por tipo de missão (simples e alinhado ao PDF)
+       
         bonus_map = {"daily": 20, "weekly": 50, "monthly": 100}
         mission_bonus = bonus_map.get(mission.mission_type, 20)
 

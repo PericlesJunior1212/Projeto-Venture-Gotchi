@@ -81,7 +81,7 @@ class SubTask(models.Model):
             user.xp = (user.xp or 0) + xp_gained
             user.save(update_fields=["xp"])
 
-        # STATS do avatar por trilha (PDF)
+        # STATS do avatar por trilha (PDF)dididid
         track_to_field = {
             "prog": "tech",
             "ux": "creativity",
