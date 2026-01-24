@@ -1,3 +1,7 @@
 from django.contrib import admin
+from .models import AvatarProfile, AvatarItem, UserInventory
 
-# Register your models here.
+admin.site.register(AvatarProfile)
+admin.site.register(AvatarItem)
+admin.site.register(UserInventory)
+
