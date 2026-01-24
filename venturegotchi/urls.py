@@ -9,6 +9,8 @@ urlpatterns = [
     path("", include("accounts.urls")),
     path("missions/", include("missions.urls")),
     path("dashboard/", include("dashboard.urls")),
+    path("avatar/", include("avatar.urls")),
+
 ]
 
 

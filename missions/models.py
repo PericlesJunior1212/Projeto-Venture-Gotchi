@@ -1,6 +1,6 @@
 from django.db import models
 from django.conf import settings
-from django.apps import apps
+
 
 
 MISSION_TYPE = [
@@ -30,7 +30,10 @@ class Mission(models.Model):
 
     mission_type = models.CharField(max_length=10, choices=MISSION_TYPE, default="daily")
     track = models.CharField(max_length=10, choices=TRACKS, default="prog")
-
+    
+    mission_xp = models.PositiveIntegerField(default=50)
+    
+    ompleted_at = models.DateTimeField(null=True, blank=True)
     completed = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
