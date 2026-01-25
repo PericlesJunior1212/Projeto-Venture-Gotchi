@@ -19,7 +19,8 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-dev-key-change-in-pro
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
 # Configuração de ALLOWED_HOSTS para Render
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
+
 
 RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
 if RENDER_EXTERNAL_HOSTNAME:
@@ -33,10 +34,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # Third party apps
     'rest_framework',
     'rest_framework_simplejwt',
-    # Local apps
     'accounts',
     'core',
     'dashboard',
@@ -141,7 +140,7 @@ REST_FRAMEWORK = {
 }
 
 # Custom user model
-#AUTH_USER_MODEL = 'accounts.CustomUser'#
+AUTH_USER_MODEL = 'accounts.User'
 
 # Security settings for production
 if not DEBUG:
