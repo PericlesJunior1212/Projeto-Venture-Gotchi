@@ -1,10 +1,8 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
-from django.core.cache import cache
-from .models import User, Profile
-from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import User
+
+User = get_user_model()
 class LoginForm(AuthenticationForm):
     """
     Formulário de Login aprimorado com:
@@ -30,7 +28,7 @@ class LoginForm(AuthenticationForm):
     
         for name, field in self.fields.items():
             field.widget.attrs.update({
-                'class': 'input-field',          
+                 "class": "form-control",          
                 'placeholder': field.label,      
             })
 
@@ -48,18 +46,7 @@ class LoginForm(AuthenticationForm):
                 code='inactive'
             )
 
-class ProfileForm(forms.ModelForm):
-    class Meta:
-        model = User
-        fields = ["bio", "interests", "avatar"]
-        widgets = {
-            "bio": forms.Textarea(attrs={"class": "form-control", "rows": 4, "placeholder": "Escreva sua bio..."}),
-            "interests": forms.Textarea(attrs={"class": "form-control", "rows": 3, "placeholder": "Ex: Django, UX, inglês..."}),
-        }
-
-    avatar = forms.ImageField(required=False, widget=forms.ClearableFileInput(attrs={"class": "form-control"}))
     
-
 
 class RegisterForm(UserCreationForm):
     email = forms.EmailField(
@@ -77,16 +64,8 @@ class RegisterForm(UserCreationForm):
         self.fields["password1"].widget.attrs.update({"class": "form-control"})
         self.fields["password2"].widget.attrs.update({"class": "form-control"})
 
-User = get_user_model()
 
-class ProfileForm(forms.ModelForm):
-    class Meta:
-        model = User
-        fields = ["bio", "interests", "avatar"]
-        widgets = {
-            "bio": forms.Textarea(attrs={"class": "form-control", "rows": 4}),
-            "interests": forms.Textarea(attrs={"class": "form-control", "rows": 3}),
-        }
+        
 
 class UserUpdateForm(forms.ModelForm):
     class Meta:
@@ -95,5 +74,22 @@ class UserUpdateForm(forms.ModelForm):
 
 class ProfileUpdateForm(forms.ModelForm):
     class Meta:
-        model = Profile
-        fields = ['avatar', 'bio', 'interests']
+        model = User
+        fields = ["avatar", "bio", "interests"]
+        widgets = {
+            "bio": forms.Textarea(attrs={
+                "class": "form-control",
+                "rows": 4,
+                "placeholder": "Escreva sua bio..."
+            }),
+            "interests": forms.Textarea(attrs={
+                "class": "form-control",
+                "rows": 3,
+                "placeholder": "Ex: Django, UX, inglês..."
+            }),
+        }
+
+    avatar = forms.ImageField(
+        required=False,
+        widget=forms.ClearableFileInput(attrs={"class": "form-control"})
+    )
