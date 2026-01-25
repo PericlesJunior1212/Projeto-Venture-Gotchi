@@ -6,7 +6,7 @@ from .views import (
     HomeView,
     ProfileView,
     profile_edit,
-    BootstrapLoginView,
+    login_view,
     register_view,
 )
 
@@ -15,7 +15,7 @@ urlpatterns = [
     path("", HomeView.as_view(), name="home"),
 
     # Auth
-    path("login/", BootstrapLoginView.as_view(), name="login"),
+    path("login/", login_view, name="login"),
     path("logout/", LogoutView.as_view(), name="logout"),
     path("register/", register_view, name="register"),
 
