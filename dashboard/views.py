@@ -2,9 +2,10 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.db.models import Count, Sum
 from django.db.models.functions import TruncDate
-
+from django.utils import timezone
 from missions.models import Mission, SubTask, TRACKS
-from .models import Achievement, ActivityEvent
+from .models import Achievement, ActivityEvent, UserAchievement
+
 
 
 @login_required
@@ -24,12 +25,13 @@ def dashboard_home(request):
         .order_by("-created_at")[:12]
     )
 
-    # conquistas (últimas 6)
     achievements = (
-        Achievement.objects
-        .filter(user=user)
-        .order_by("-earned_at")[:6]
-    )
+    UserAchievement.objects
+    .filter(user=user)
+    .select_related("achievement")[:6]
+)
+
+   
 
     # gráfico: XP ganho por dia (últimos 7 dias)
     xp_by_day_qs = (

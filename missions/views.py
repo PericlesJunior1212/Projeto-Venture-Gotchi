@@ -2,7 +2,6 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db import transaction
-from django.utils import timezone
 from .models import Mission, SubTask
 from .forms import MissionForm, SubTaskForm
 from django.views.decorators.http import require_POST
@@ -12,7 +11,6 @@ from django.apps import apps
 @login_required
 def mission_detail(request, mission_id):
     mission = get_object_or_404(Mission, id=mission_id, user=request.user)
-
     subtasks = mission.subtasks.all().order_by("id")
 
     if request.method == "POST":
@@ -21,7 +19,6 @@ def mission_detail(request, mission_id):
             subtask = subtask_form.save(commit=False)
             subtask.mission = mission
 
-            
             if subtask.xp_reward is None:
                 subtask.xp_reward = 10
 
@@ -55,46 +52,41 @@ def mission_create(request):
 
     return render(request, "missions/mission_create.html", {"form": form})
 
+
 @login_required
 def mission_edit(request, mission_id):
     mission = get_object_or_404(Mission, id=mission_id, user=request.user)
 
-    if request.method == 'POST':
-        mission.title = request.POST.get('title')
-        mission.description = request.POST.get('description', '')
+    if request.method == "POST":
+        mission.title = request.POST.get("title")
+        mission.description = request.POST.get("description", "")
         mission.save()
 
         messages.success(request, "Missão atualizada!")
-        return redirect('mission_detail', mission.id)
+        return redirect("mission_detail", mission.id)
 
-    return render(request, 'missions/mission_edit.html', {
-        'mission': mission
-    })
-
+    return render(request, "missions/mission_edit.html", {"mission": mission})
 
 
 @login_required
 def mission_delete(request, mission_id):
     mission = get_object_or_404(Mission, id=mission_id, user=request.user)
 
-    if request.method == 'POST':
+    if request.method == "POST":
         mission.delete()
         messages.success(request, "Missão excluída!")
-        return redirect('missions_list')
+        return redirect("missions_list")
 
-    return render(request, 'missions/mission_delete.html', {
-        'mission': mission
-    })
-
+    return render(request, "missions/mission_delete.html", {"mission": mission})
 
 
 @login_required
 def subtask_create(request, mission_id):
     mission = get_object_or_404(Mission, id=mission_id, user=request.user)
 
-    if request.method == 'POST':
-        title = request.POST.get('title')
-        xp_reward = int(request.POST.get('xp_reward', 10))
+    if request.method == "POST":
+        title = request.POST.get("title")
+        xp_reward = int(request.POST.get("xp_reward", 10))
 
         SubTask.objects.create(
             mission=mission,
@@ -103,18 +95,15 @@ def subtask_create(request, mission_id):
         )
 
         messages.success(request, "Tarefa adicionada à missão!")
-        return redirect('mission_detail', mission.id)
+        return redirect("mission_detail", mission.id)
 
-    return render(request, 'missions/subtask_create.html', {
-        'mission': mission
-    })
+    return render(request, "missions/subtask_create.html", {"mission": mission})
 
 
 @login_required
 @require_POST
 @transaction.atomic
 def complete_subtask(request, subtask_id):
-    Achievement = apps.get_model("dashboard", "Achievement")
     ActivityEvent = apps.get_model("dashboard", "ActivityEvent")
 
     subtask = get_object_or_404(SubTask, id=subtask_id, mission__user=request.user)
@@ -124,13 +113,13 @@ def complete_subtask(request, subtask_id):
         return redirect("mission_detail", mission_id=subtask.mission.id)
 
     user = request.user
-    before_level = user.level
+    before_level = getattr(user, "level", 1) or 1
     mission = subtask.mission
 
-    
+    # Conclui subtarefa (isso já dá XP + stats no seu model SubTask.complete())
     xp_gained = subtask.complete()
 
- 
+    # Histórico: subtarefa concluída
     ActivityEvent.objects.create(
         user=user,
         event_type="subtask_completed",
@@ -139,19 +128,9 @@ def complete_subtask(request, subtask_id):
         track=mission.track,
     )
 
-
-    Achievement.objects.get_or_create(
-        user=user,
-        code="first_subtask",
-        defaults={
-            "title": "Primeira Subtarefa!",
-            "description": "Você concluiu sua primeira subtarefa.",
-        },
-    )
-
- 
-    user.refresh_from_db(fields=["level", "xp"])
-    if user.level > before_level:
+    # Detecta level up
+    user.refresh_from_db()
+    if getattr(user, "level", 1) > before_level:
         ActivityEvent.objects.create(
             user=user,
             event_type="level_up",
@@ -160,29 +139,29 @@ def complete_subtask(request, subtask_id):
             track="",
         )
 
-        if user.level >= 5:
-            Achievement.objects.get_or_create(
-                user=user,
-                code="level_5",
-                defaults={
-                    "title": "Nível 5!",
-                    "description": "Você chegou ao nível 5. Continue evoluindo!",
-                },
-            )
-
-    
+    # Se a missão chegou a 100%, marca como concluída e dá bônus
     mission.refresh_from_db()
     if mission.progress == 100 and not mission.completed:
         mission.completed = True
-        mission.save(update_fields=["completed"])
+        # se você tiver completed_at no model, aproveita:
+        if hasattr(mission, "completed_at"):
+            from django.utils import timezone
+            mission.completed_at = timezone.now()
+            mission.save(update_fields=["completed", "completed_at"])
+        else:
+            mission.save(update_fields=["completed"])
 
-       
         bonus_map = {"daily": 20, "weekly": 50, "monthly": 100}
         mission_bonus = bonus_map.get(mission.mission_type, 20)
 
-        before_level2 = user.level
-        user.add_xp(mission_bonus)
-        user.refresh_from_db(fields=["level", "xp"])
+        before_level2 = getattr(user, "level", 1) or 1
+        if hasattr(user, "add_xp"):
+            user.add_xp(mission_bonus)
+        else:
+            user.xp = (getattr(user, "xp", 0) or 0) + mission_bonus
+            user.save(update_fields=["xp"])
+
+        user.refresh_from_db()
 
         ActivityEvent.objects.create(
             user=user,
@@ -192,16 +171,7 @@ def complete_subtask(request, subtask_id):
             track=mission.track,
         )
 
-        Achievement.objects.get_or_create(
-            user=user,
-            code="first_mission",
-            defaults={
-                "title": "Primeira Missão!",
-                "description": "Você concluiu sua primeira missão completa.",
-            },
-        )
-
-        if user.level > before_level2:
+        if getattr(user, "level", 1) > before_level2:
             ActivityEvent.objects.create(
                 user=user,
                 event_type="level_up",
@@ -210,9 +180,17 @@ def complete_subtask(request, subtask_id):
                 track="",
             )
 
+    # Conquistas: deixa centralizado no arquivo dashboard/achievements.py
+    # (evita duplicar regra aqui)
+    try:
+        from dashboard.achievements import check_and_award
+        check_and_award(user)
+    except Exception:
+        # se ainda não existir ou der algum erro, não quebra a conclusão
+        pass
+
     messages.success(request, f"Subtarefa concluída! Você ganhou {xp_gained} XP ✅")
     return redirect("mission_detail", mission_id=mission.id)
-
 
 
 @login_required
@@ -228,6 +206,7 @@ def create_mission(request):
         form = MissionForm()
 
     return render(request, "missions/create.html", {"form": form})
+
 
 @login_required
 def missions_list(request):

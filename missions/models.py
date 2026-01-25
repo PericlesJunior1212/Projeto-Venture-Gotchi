@@ -3,6 +3,7 @@ from django.conf import settings
 
 
 
+
 MISSION_TYPE = [
     ("daily", "Diária"),
     ("weekly", "Semanal"),
@@ -33,7 +34,7 @@ class Mission(models.Model):
     
     mission_xp = models.PositiveIntegerField(default=50)
     
-    ompleted_at = models.DateTimeField(null=True, blank=True)
+    completed_at = models.DateTimeField(null=True, blank=True)
     completed = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -84,7 +85,18 @@ class SubTask(models.Model):
             user.xp = (user.xp or 0) + xp_gained
             user.save(update_fields=["xp"])
 
-        # STATS do avatar por trilha (PDF)dididid
+        # Histórico do dashboard (evita import circular)
+        from dashboard.models import ActivityEvent
+        ActivityEvent.objects.create(
+            user=user,
+            event_type="subtask_completed",
+            message=f"Subtarefa concluída: {self.title}",
+            xp_delta=xp_gained,
+            track=self.mission.track,
+            
+        )
+
+        # STATS do avatar por trilha
         track_to_field = {
             "prog": "tech",
             "ux": "creativity",
@@ -100,5 +112,9 @@ class SubTask(models.Model):
             current = getattr(user, field) or 0
             setattr(user, field, min(100, current + stat_gain))
             user.save(update_fields=[field])
+
+        # Conquistas
+        from dashboard.achievements import check_and_award
+        check_and_award(user)
 
         return xp_gained

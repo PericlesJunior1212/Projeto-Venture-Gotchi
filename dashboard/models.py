@@ -2,24 +2,6 @@ from django.db import models
 from django.conf import settings
 
 
-class Achievement(models.Model):
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name="achievements"
-    )
-    code = models.CharField(max_length=50)
-    title = models.CharField(max_length=100)
-    description = models.CharField(max_length=200, blank=True, default="")
-    earned_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        unique_together = ("user", "code")
-
-    def __str__(self):
-        return f"{self.user} - {self.title}"
-
-
 class ActivityEvent(models.Model):
     """
     Histórico do usuário (feed).
@@ -42,12 +24,34 @@ class ActivityEvent(models.Model):
     )
 
     event_type = models.CharField(max_length=30, choices=EVENT_TYPES)
-    message = models.CharField(max_length=220)
+    message = models.CharField(max_length=255)
 
-    xp_delta = models.IntegerField(default=0)  # ganho/perda de XP (normalmente ganho)
-    track = models.CharField(max_length=10, blank=True, default="")  # prog/ux/biz/soft
+    xp_delta = models.IntegerField(default=0)
+    track = models.CharField(max_length=10, blank=True, default="")
 
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.user} - {self.event_type} - {self.created_at}"
+
+
+class Achievement(models.Model):
+    key = models.SlugField(unique=True)  # ex: "first_subtask"
+    title = models.CharField(max_length=80)
+    description = models.CharField(max_length=160)
+
+    def __str__(self):
+        return self.title
+
+
+class UserAchievement(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    achievement = models.ForeignKey(Achievement, on_delete=models.CASCADE)
+    earned_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ("user", "achievement")
+        ordering = ["-earned_at"]
+
+    def __str__(self):
+        return f"{self.user} - {self.achievement}"

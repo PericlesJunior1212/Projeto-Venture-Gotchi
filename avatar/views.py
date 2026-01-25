@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.shortcuts import get_object_or_404, redirect, render
+from missions.models import Mission, SubTask
 
 from .models import AvatarProfile, AvatarItem, UserInventory
 
@@ -21,18 +22,39 @@ def avatar_view(request):
     xp_next = level * 100
 
     progress_percent = int((xp / xp_next) * 100) if xp_next else 0
+    
     if user.level < 5:
-    gotchi_image = "gotchi/gotchi_lvl1.png"
+        gotchi_image = "gotchi/gotchi_lvl1.png"
     elif user.level < 10:
-    gotchi_image = "gotchi/gotchi_lvl2.png" 
+        gotchi_image = "gotchi/gotchi_lvl2.png" 
     else:
-    gotchi_image = "gotchi/gotchi_lvl3.png"
+        gotchi_image = "gotchi/gotchi_lvl3.png"
+        
+    missions_count = Mission.objects.filter(user=user).count()
+    done_subtasks_count = SubTask.objects.filter(mission__user=user,completed=True).count()
+
+
+    achievements = []
+
+    if done_subtasks_count >= 1:
+        achievements.append({"title": "Primeira Subtarefa!", "desc": "Você concluiu sua primeira subtarefa."})
+
+    if missions_count >= 1:
+        achievements.append({"title": "Primeira Missão!", "desc": "Você criou sua primeira missão."})
+
+    if user.level > 1:
+        achievements.append({"title": "Subiu de Nível!", "desc": f"Você alcançou o nível {user.level}."})
+
 
     context = {
+        
         "user": user,
+        "gotchi_image": gotchi_image,
+        "achievements": achievements,
         "xp": xp,
         "level": level,
         "xp_next": xp_next,
+        "level": level,
         "progress_percent": progress_percent,
         "stats": {
             "tech": user.tech,
