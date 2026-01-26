@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 import uuid
 import os
-
+from django.utils.text import slugify
 
 def avatar_upload_to(instance, filename):
     ext = os.path.splitext(filename)[1]
@@ -12,7 +12,8 @@ def avatar_upload_to(instance, filename):
 
 
 class User(AbstractUser):
-    
+    is_public_profile = models.BooleanField(default=False)
+    public_slug = models.SlugField(max_length=60, unique=True, blank=True, null=True)
     REQUEST_ROLE_CHOICES = (
         ('user', 'Usuário'),
         ('mentor', 'Mentor'),
@@ -61,3 +62,8 @@ class User(AbstractUser):
     def __str__(self):
         return f"{self.username} (Level {self.level})"
 
+    def save(self, *args, **kwargs):
+        if self.is_public_profile and not self.public_slug:
+            base = slugify(self.username)[:50] or "user"
+            self.public_slug = f"{base}-{uuid.uuid4().hex[:6]}"
+        super().save(*args, **kwargs)
