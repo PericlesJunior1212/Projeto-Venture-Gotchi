@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+  <div class="card p-4">
+    <h3>🔒 Área restrita</h3>
+    <p>Você está logada, mas não tem permissão para acessar essa funcionalidade.</p>
+
+    <p class="mb-1">Seu papel atual:</p>
+    <ul>
+      {% for g in request.user.groups.all %}
+        <li><strong>{{ g.name }}</strong></li>
+      {% empty %}
+        <li><strong>Sem grupo</strong></li>
+      {% endfor %}
+    </ul>
+
+    <p class="text-muted">
+      Se você solicitou Mentor/Empresa, aguarde um admin aprovar.
+    </p>
+  </div>
+</div>
+{% endblock %}

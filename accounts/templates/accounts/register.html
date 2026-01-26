@@ -12,14 +12,14 @@
             {% csrf_token %}
 
             {% if form.non_field_errors %}
-              <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+            <div class="alert alert-danger">{{ form.non_field_errors }}</div>
             {% endif %}
 
             <div class="mb-3">
               <label class="form-label">Usuário</label>
               {{ form.username }}
               {% for error in form.username.errors %}
-                <div class="text-danger small">{{ error }}</div>
+              <div class="text-danger small">{{ error }}</div>
               {% endfor %}
             </div>
 
@@ -27,7 +27,14 @@
               <label class="form-label">E-mail</label>
               {{ form.email }}
               {% for error in form.email.errors %}
-                <div class="text-danger small">{{ error }}</div>
+              <div class="text-danger small">{{ error }}</div>
+              {% endfor %}
+            </div>
+            <div class="mb-3">
+              <label class="form-label">{{ form.requested_role.label }}</label>
+              {{ form.requested_role }}
+              {% for error in form.requested_role.errors %}
+              <div class="text-danger small">{{ error }}</div>
               {% endfor %}
             </div>
 
@@ -35,7 +42,7 @@
               <label class="form-label">Senha</label>
               {{ form.password1 }}
               {% for error in form.password1.errors %}
-                <div class="text-danger small">{{ error }}</div>
+              <div class="text-danger small">{{ error }}</div>
               {% endfor %}
             </div>
 
@@ -43,7 +50,7 @@
               <label class="form-label">Confirmar senha</label>
               {{ form.password2 }}
               {% for error in form.password2.errors %}
-                <div class="text-danger small">{{ error }}</div>
+              <div class="text-danger small">{{ error }}</div>
               {% endfor %}
             </div>
 
