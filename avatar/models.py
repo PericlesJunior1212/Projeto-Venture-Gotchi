@@ -29,13 +29,32 @@ class AvatarItem(models.Model):
         ("accessory", "Acessório"),
     ]
 
+    RARITY_CHOICES = [
+        ("common", "Comum"),
+        ("rare", "Raro"),
+        ("epic", "Épico"),
+        ("legendary", "Lendário"),
+    ]
     code = models.CharField(max_length=50, unique=True)  # ex: "cap_red"
     name = models.CharField(max_length=80)
+    description = models.TextField(
+        blank=True,
+        help_text="Descrição do item (história, efeito ou curiosidade)"
+    )
     slot = models.CharField(max_length=15, choices=SLOT_CHOICES)
     price_xp = models.PositiveIntegerField(default=50)
 
+    rarity = models.CharField(
+        max_length=20,
+        choices=RARITY_CHOICES,
+        default="common"
+    )
    
-    image_path = models.CharField(max_length=200, default="avatar/items/placeholder.png")
+    image = models.ImageField(
+        upload_to="avatar/items/",
+        blank=True,
+        null=True
+    )
 
     def __str__(self):
         return f"{self.name} ({self.slot})"

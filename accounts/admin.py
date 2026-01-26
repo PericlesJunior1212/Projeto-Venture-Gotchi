@@ -6,16 +6,21 @@ from .models import User
 
 @admin.action(description="Aprovar papel solicitado e mover para o grupo")
 def approve_role(modeladmin, request, queryset):
+    base_group = Group.objects.get(name="Usuarios")
     for u in queryset:
         if u.requested_role == 'mentor':
-            g = Group.objects.get(name='Mentores')
+            role_group= Group.objects.get(name='Mentores')
         elif u.requested_role == 'company':
-            g = Group.objects.get(name='Empresas')
+           role_group= Group.objects.get(name='Empresas')
         else:
-            g = Group.objects.get(name='Usuarios')
+            role_group= Group.objects.get(name='Usuarios')
 
         u.groups.clear()
-        u.groups.add(g)
+        u.groups.add(base_group)
+        
+        if role_group != base_group:
+            u.groups.add(role_group)
+
         u.role_approved = True
         u.save()
 

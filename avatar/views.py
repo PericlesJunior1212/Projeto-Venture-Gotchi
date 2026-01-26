@@ -45,7 +45,14 @@ def avatar_view(request):
     if user.level > 1:
         achievements.append({"title": "Subiu de Nível!", "desc": f"Você alcançou o nível {user.level}."})
 
+    profile = _get_or_create_profile(user)
 
+    inventory = (
+        UserInventory.objects
+        .filter(user=user)
+        .select_related("item")
+        .order_by("item__slot", "item__rarity", "item__name")
+    )
     context = {
         
         "user": user,
@@ -61,7 +68,10 @@ def avatar_view(request):
             "creativity": user.creativity,
             "discipline": user.discipline,
             "leadership": user.leadership,
-        }
+        },
+        "profile": profile,
+        "inventory": inventory,
+        
     }
 
     return render(request, "avatar/meu_gotchi.html", context)
