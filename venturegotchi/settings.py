@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'dashboard',
     'missions',
     'avatar',
+    "community",
 ]
 
 MIDDLEWARE = [
