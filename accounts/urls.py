@@ -10,6 +10,8 @@ from .views import (
     profile_edit,
     login_view,
     register_view,
+    public_profile,
+    send_feedback,
 )
 
 urlpatterns = [
@@ -57,6 +59,10 @@ urlpatterns = [
         name="password_reset_complete",
     ),
     path("pending/", pending_view, name="pending"),
+    
+    path("u/<slug:slug>/", public_profile, name="public_profile"),
+    path("u/<slug:slug>/feedback/", send_feedback, name="send_feedback"),
+
 
 ]
 
