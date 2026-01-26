@@ -1,15 +1,17 @@
 import logging
 from django.contrib import messages
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect,get_object_or_404
 from django.views.generic import TemplateView
 from .forms import RegisterForm, ProfileUpdateForm, LoginForm
+from community.models import UserFeedback
+from django.views.decorators.http import require_POST
 
 
 logger = logging.getLogger(__name__)
-
+User = get_user_model()
 
 
 def login_view(request):
@@ -145,3 +147,69 @@ def register_view(request):
 @login_required
 def pending_view(request):
     return render(request, "accounts/pending.html")
+
+@login_required
+def public_profile(request, slug):
+    u = get_object_or_404(User, public_slug=slug, is_public_profile=True)
+
+    feedbacks = (
+        UserFeedback.objects
+        .filter(to_user=u, is_hidden=False)
+        .select_related("from_user")
+        .order_by("-created_at")[:20]
+    )
+
+    can_send_feedback = (
+        request.user.is_authenticated
+        and request.user.id != u.id
+        and request.user.groups.filter(name="Usuarios").exists()
+    )
+
+    return render(
+        request,
+        "accounts/public_profile.html",
+        {
+            "profile_user": u,
+            "feedbacks": feedbacks,
+            "can_send_feedback": can_send_feedback,
+        },
+    )
+    
+@login_required
+@require_POST
+def send_feedback(request, slug):
+    to_user = get_object_or_404(User, public_slug=slug, is_public_profile=True)
+
+    if to_user.id == request.user.id:
+        messages.error(request, "Você não pode enviar feedback para você mesma.")
+        return redirect("public_profile", slug=slug)
+
+    # MVP: só Usuários Individuais enviam feedback
+    if not request.user.groups.filter(name="Usuarios").exists():
+        messages.error(request, "Apenas Usuários Individuais podem enviar feedback.")
+        return redirect("public_profile", slug=slug)
+
+    msg = (request.POST.get("message") or "").strip()
+    rating_raw = request.POST.get("rating") or "5"
+
+    try:
+        rating = int(rating_raw)
+    except ValueError:
+        rating = 5
+
+    rating = max(1, min(5, rating))
+
+    if len(msg) < 5:
+        messages.error(request, "Escreva um feedback com pelo menos 5 caracteres.")
+        return redirect("public_profile", slug=slug)
+
+    UserFeedback.objects.create(
+        from_user=request.user,
+        to_user=to_user,
+        rating=rating,
+        message=msg,
+    )
+
+    messages.success(request, "Feedback enviado ✅")
+    return redirect("public_profile", slug=slug)
+    
