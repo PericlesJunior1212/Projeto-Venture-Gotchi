@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
+{% include "partials/hud.html" %}
+
 {% if active_event %}
   <div class="alert alert-info">
     🎉 <strong>Evento ativo:</strong> {{ active_event.name }}
