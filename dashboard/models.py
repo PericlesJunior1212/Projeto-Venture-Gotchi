@@ -55,3 +55,11 @@ class UserAchievement(models.Model):
 
     def __str__(self):
         return f"{self.user} - {self.achievement}"
+    
+class ThemedEvent(models.Model):
+    name = models.CharField(max_length=100)
+    active = models.BooleanField(default=False)
+    xp_multiplier = models.FloatField(default=1.0)
+
+    def __str__(self):
+        return self.name
