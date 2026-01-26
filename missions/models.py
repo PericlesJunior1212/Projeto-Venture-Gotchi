@@ -78,6 +78,11 @@ class SubTask(models.Model):
         user = self.mission.user
         xp_gained = self.xp_reward or 10
 
+        from dashboard.models import ThemedEvent
+        event = ThemedEvent.objects.filter(active=True).first()
+        if event and event.xp_multiplier:
+                xp_gained = int(xp_gained * event.xp_multiplier)
+
         # XP
         if hasattr(user, "add_xp") and callable(getattr(user, "add_xp")):
             user.add_xp(xp_gained)
