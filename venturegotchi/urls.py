@@ -11,6 +11,7 @@ urlpatterns = [
     path("dashboard/", include("dashboard.urls")),
     path("avatar/", include("avatar.urls")),
     path("community/", include("community.urls")),
+    path("orgs/", include("orgs.urls")),
 
 
 ]

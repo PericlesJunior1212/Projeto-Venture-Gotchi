@@ -65,10 +65,7 @@ class SubTask(models.Model):
         return self.title
 
     def complete(self) -> int:
-        """
-        Marca como concluída, dá XP e aumenta status do Gotchi baseado na trilha.
-        Retorna o XP ganho.
-        """
+       
         if self.completed:
             return 0
 
@@ -121,5 +118,13 @@ class SubTask(models.Model):
         # Conquistas
         from dashboard.achievements import check_and_award
         check_and_award(user)
+             
+        try:
+            from orgs.services import update_team_goals_on_xp
+            update_team_goals_on_xp(user, xp_gained=xp_gained, subtasks_done=1)
+        except Exception:
+            
+            pass
 
+       
         return xp_gained
