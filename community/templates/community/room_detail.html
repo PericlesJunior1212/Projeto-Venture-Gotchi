@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container py-4" style="max-width: 900px;">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">{{ room.title }}</h2>
+    <a class="btn btn-outline-secondary btn-sm" href="{% url 'community_room_list' %}">Voltar</a>
+  </div>
+
+  {% if room.description %}
+    <p class="text-muted">{{ room.description }}</p>
+  {% endif %}
+
+  <div class="card shadow-sm mb-3">
+    <div class="card-body">
+      <form method="post" action="{% url 'community_room_post' room.slug %}">
+        {% csrf_token %}
+        <textarea name="content" class="form-control" rows="3" placeholder="Escreva algo..."></textarea>
+        <button class="btn btn-primary mt-2">Enviar</button>
+      </form>
+    </div>
+  </div>
+
+  <h5>Mensagens</h5>
+  {% if posts %}
+    {% for p in posts %}
+      <div class="border rounded p-3 mb-2 bg-white">
+        <strong>{{ p.user.username }}</strong>
+        <div class="text-muted small">{{ p.created_at }}</div>
+        <div class="mt-2">{{ p.content }}</div>
+      </div>
+    {% endfor %}
+  {% else %}
+    <p class="text-muted">Nenhuma mensagem ainda.</p>
+  {% endif %}
+</div>
+{% endblock %}

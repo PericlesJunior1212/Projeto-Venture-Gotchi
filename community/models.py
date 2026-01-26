@@ -23,3 +23,23 @@ class RoomPost(models.Model):
     def __str__(self):
         return f"{self.user} @ {self.room}"
 
+class UserFeedback(models.Model):
+    from_user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="feedback_sent"
+    )
+    to_user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="feedback_received"
+    )
+    rating = models.PositiveSmallIntegerField(default=5)  # 1..5
+    message = models.TextField(max_length=500)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    # moderação simples
+    is_hidden = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.from_user} -> {self.to_user} ({self.rating})"
