@@ -42,8 +42,8 @@ INSTALLED_APPS = [
     'missions',
     'avatar',
     "community",
+    "orgs",                   
 ]
-
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',  # IMPORTANTE: Deve vir primeiro após SecurityMiddleware
