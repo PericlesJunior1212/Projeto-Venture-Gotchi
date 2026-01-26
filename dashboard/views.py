@@ -6,8 +6,10 @@ from django.utils import timezone
 from missions.models import Mission, SubTask, TRACKS
 from .models import Achievement, ActivityEvent, UserAchievement
 from dashboard.models import UserAchievement
+from accounts.decorators import require_perm, approval_required
+from django.contrib.auth import get_user_model
 
-
+User = get_user_model()
 
 @login_required
 def dashboard_home(request):
@@ -88,3 +90,28 @@ def dashboard_home(request):
         "xp_totals": xp_totals,
     }
     return render(request, "dashboard/home.html", context)
+
+@login_required
+@approval_required
+@require_perm("missions.add_mission")
+def mentor_panel(request):
+    # visão simples: lista usuários e nível/xp (para “avaliar progresso”)
+    users = User.objects.filter(is_superuser=False).order_by("username")
+    return render(request, "dashboard/mentor_panel.html", {"users": users})
+
+@login_required
+@approval_required
+@require_perm("dashboard.view_activityevent")
+def company_panel(request):
+    # visão simples: lista usuários (para “painel coletivo/relatórios”)
+    users = User.objects.filter(is_superuser=False).order_by("username")
+    return render(request, "dashboard/company_panel.html", {"users": users})
+
+def leaderboard(request):
+    top_users = (
+        User.objects
+        .filter(is_superuser=False, groups__name="Usuarios")
+        .distinct()
+        .order_by("-xp", "-level", "username")[:20]
+    )
+    return render(request, "dashboard/leaderboard.html", {"top_users": top_users})
