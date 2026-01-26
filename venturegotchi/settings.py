@@ -36,7 +36,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework_simplejwt',
-    'accounts',
+    'accounts.apps.AccountsConfig',
     'core',
     'dashboard',
     'missions',
@@ -150,3 +150,8 @@ if not DEBUG:
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
+
+LOGIN_URL = "login"
+LOGIN_REDIRECT_URL = "dashboard"    
+LOGOUT_REDIRECT_URL = "login"
+   
