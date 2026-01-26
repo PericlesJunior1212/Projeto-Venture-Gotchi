@@ -157,9 +157,10 @@ def complete_subtask(request, subtask_id):
     # Se a missão chegou a 100%, marca como concluída e dá bônus
     mission.refresh_from_db()
     
-    before_level2 = getattr(user, "level", 1) or 1 
-    
-    if mission.progress >= 100 and not mission.completed:
+    all_done = not mission.subtasks.filter(completed=False).exists()
+
+    before_level2 = getattr(user, "level", 1) or 1
+    if all_done and not mission.completed:
         mission.completed = True
                 # ✅ Recompensa: item colecionável ao concluir a missão
         if hasattr(mission, "completed_at"):
@@ -206,14 +207,6 @@ def complete_subtask(request, subtask_id):
             track="",
         )
 
-        if getattr(user, "level", 1) > before_level2:
-            ActivityEvent.objects.create(
-                user=user,
-                event_type="level_up",
-                message=f"Subiu para o nível {user.level}!",
-                xp_delta=0,
-                track="",
-            )
 
     # Conquistas: deixa centralizado no arquivo dashboard/achievements.py
     # (evita duplicar regra aqui)
