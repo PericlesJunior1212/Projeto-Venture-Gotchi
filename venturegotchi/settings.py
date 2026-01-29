@@ -159,3 +159,5 @@ LOGOUT_REDIRECT_URL = "login"
 CSRF_TRUSTED_ORIGINS = [
     "https://projeto-venture-gotchi-g8jn.onrender.com",
 ]
+
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
