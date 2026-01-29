@@ -146,7 +146,16 @@ def register_view(request):
 
 @login_required
 def pending_view(request):
-    return render(request, "accounts/pending.html")
+    user = request.user
+
+    
+    if getattr(user, "role_approved", False):
+        if user.requested_role == "mentor":
+            return redirect("mentor_dashboard") 
+        if user.requested_role == "company":
+            return redirect("company_panel")     
+
+        return redirect("dashboard")
 
 @login_required
 def public_profile(request, slug):
@@ -212,4 +221,11 @@ def send_feedback(request, slug):
 
     messages.success(request, "Feedback enviado ✅")
     return redirect("public_profile", slug=slug)
+
+
+@login_required
+def mentor_dashboard(request):
     
+    if not request.user.groups.filter(name="Mentores").exists():
+        return redirect("pending")
+    return render(request, "accounts/mentor_dashboard.html")
