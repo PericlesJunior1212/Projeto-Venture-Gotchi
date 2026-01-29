@@ -12,10 +12,12 @@ urlpatterns = [
     path("avatar/", include("avatar.urls")),
     path("community/", include("community.urls")),
     path("orgs/", include("orgs.urls")),
+    path("", include("dashboard.urls")),
+    path("accounts/", include("accounts.urls")),
 
 
 ]
 
 
-
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

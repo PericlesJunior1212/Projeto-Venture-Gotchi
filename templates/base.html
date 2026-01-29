@@ -77,10 +77,11 @@
           <li class="nav-item"><a class="nav-link" href="{% url 'mission_create' %}">Nova Missão</a></li>
           <li class="nav-item"><a class="nav-link" href="{% url 'avatar' %}">Meu Gotchi</a></li>
           <li class="nav-item"><a class="nav-link" href="{% url 'leaderboard' %}">Ranking</a></li>
-
-          {% if user.role_approved and perms.missions.add_mission %}
-          <li class="nav-item"><a class="nav-link" href="{% url 'mentor_panel' %}">Mentor</a></li>
+          
+          {% if user.groups.filter(name="Mentores").exists %}
+            <a href="{% url 'mentor_dashboard' %}">Mentor</a>
           {% endif %}
+
 
           {% if user.role_approved and perms.dashboard.view_activityevent %}
           <li class="nav-item"><a class="nav-link" href="{% url 'company_panel' %}">Empresa</a></li>
