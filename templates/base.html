@@ -81,7 +81,7 @@
 
           
           {% if user|has_group:"Mentores" %}
-            <a href="{% url 'mentor_dashboard' %}">Mentor</a>
+          <a class="nav-link" href="{% url 'pending' %}">Mentor</a>
           {% endif %}
 
           {% if user.role_approved and perms.dashboard.view_activityevent %}
