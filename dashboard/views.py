@@ -4,7 +4,7 @@ from django.db.models import Count, Sum
 from django.db.models.functions import TruncDate
 from django.utils import timezone
 from missions.models import Mission, SubTask, TRACKS
-from .models import Achievement, ActivityEvent, UserAchievement, ThemedEvent
+from .models import Achievement, ActivityEvent, ThemedEvent
 from accounts.decorators import require_perm, approval_required
 from django.contrib.auth import get_user_model
 
