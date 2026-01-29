@@ -78,10 +78,16 @@
           <li class="nav-item"><a class="nav-link" href="{% url 'mission_create' %}">Nova Missão</a></li>
           <li class="nav-item"><a class="nav-link" href="{% url 'avatar' %}">Meu Gotchi</a></li>
           <li class="nav-item"><a class="nav-link" href="{% url 'leaderboard' %}">Ranking</a></li>
-
-          
-          {% if user|has_group:"Mentores" %}
-          <a class="nav-link" href="{% url 'pending' %}">Mentor</a>
+          {% if user|has_group:"Mentores" and user.role_approved %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'mentor_dashboard' %}">Mentor</a>
+          </li>
+          {% else %}
+          {% if user.requested_role == "mentor" and not user.role_approved %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'pending' %}">Mentor</a>
+          </li>
+          {% endif %}
           {% endif %}
 
           {% if user.role_approved and perms.dashboard.view_activityevent %}
@@ -123,13 +129,13 @@
   {% endif %}
 
   <!-- Conteúdo -->
- <main class="py-4">
-  <div class="container vg-shell">
-    <div class="vg-page">
-      {% block content %}{% endblock %}
+  <main class="py-4">
+    <div class="container vg-shell">
+      <div class="vg-page">
+        {% block content %}{% endblock %}
+      </div>
     </div>
-  </div>
-</main>
+  </main>
 
   <footer class="py-3 border-top bg-white">
     <div class="container small text-muted d-flex justify-content-between">
