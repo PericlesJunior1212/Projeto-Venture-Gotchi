@@ -80,7 +80,7 @@ WSGI_APPLICATION = 'venturegotchi.wsgi.application'
 
 DATABASES = {
     'default': dj_database_url.config(
-        default='sqlite:///db.sqlite3',  # Fallback para SQLite
+        default= os.environ.get('DATABASE_URL'),  # Fallback para SQLite
         conn_max_age=600
     )
 }
