@@ -97,6 +97,11 @@
           {% endif %}
         </ul>
 
+        {% if profile.photo %}
+          <img src="{{ profile.photo.url }}" alt="Foto">
+        {% endif %}
+
+
         <ul class="navbar-nav ms-auto align-items-lg-center">
           {% if user.is_authenticated %}
           <li class="nav-item me-lg-3">
