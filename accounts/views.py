@@ -109,17 +109,18 @@ class ProfileView(LoginRequiredMixin, TemplateView):
 
 @login_required
 def profile_edit(request):
-
     if request.method == "POST":
         form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user)
         if form.is_valid():
             form.save()
             messages.success(request, "Perfil atualizado com sucesso!")
             return redirect("profile")
+        else:
+            messages.error(request, "Erro ao salvar o perfil.")
     else:
         form = ProfileUpdateForm(instance=request.user)
 
-    return render(request, "accounts/profile.html", {"form": form})
+    return render(request, "accounts/profile_edit.html", {"form": form})
 
 
 
@@ -143,19 +144,20 @@ def register_view(request):
         form = RegisterForm()
 
     return render(request, "accounts/register.html", {"form": form})
-
 @login_required
 def pending_view(request):
     user = request.user
 
-    
     if getattr(user, "role_approved", False):
         if user.requested_role == "mentor":
-            return redirect("mentor_dashboard") 
+            return redirect("mentor_dashboard")
         if user.requested_role == "company":
-            return redirect("company_panel")     
-
+            return redirect("company_panel")
         return redirect("dashboard")
+
+    return render(request, "accounts/pending.html")
+
+     
 
 @login_required
 def public_profile(request, slug):

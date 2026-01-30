@@ -31,7 +31,7 @@ class User(AbstractUser):
     interests = models.CharField(max_length=255, blank=True, default="")
 
    
-    avatar = models.ImageField(upload_to="avatars/", blank=True, null=True)
+    avatar = models.ImageField(upload_to="user_avatars/", blank=True, null=True)
 
     xp = models.PositiveIntegerField(default=0)
     level = models.PositiveIntegerField(default=1)
