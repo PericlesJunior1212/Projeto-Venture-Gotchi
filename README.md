@@ -1,125 +1,176 @@
-# VentureGotchi
+# 🚀 Venture Gotchi
 
-VentureGotchi é uma aplicação web desenvolvida em Python com Django, com foco na aplicação prática de conceitos de backend, autenticação, modelagem de dados e gamificação.
+Sistema web gamificado desenvolvido para incentivar produtividade, colaboração em equipe e engajamento dentro de organizações através de missões, recompensas e evolução de personagens virtuais.
 
-O sistema permite que usuários criem missões e subtarefas, acompanhem seu progresso por meio de XP e níveis e visualizem a evolução do seu avatar (Gotchi), consolidando conceitos fundamentais do framework Django.
+A aplicação permite que usuários realizem desafios, acompanhem seu progresso e evoluam seus personagens em um ambiente inspirado em gamificação corporativa.
 
-## Objetivo do Projeto
+---
 
-Este projeto foi desenvolvido com o objetivo de:
+# 🌐 Acesse o Projeto
 
-- Praticar o desenvolvimento de aplicações web com Django
-- Aplicar conceitos de autenticação e autorização de usuários
-- Trabalhar com modelagem de dados utilizando o Django ORM
-- Implementar um sistema de gamificação com XP, níveis e progresso
-- Integrar o backend Django com frontend utilizando Bootstrap
+🔗 Sistema online:  
+https://projeto-venture-gotchi-g8jn.onrender.com
 
-## Tecnologias Utilizadas
+📂 Repositório no GitHub:  
+https://github.com/JherikaSilva/Projeto-Venture-Gotchi
 
-- Python
-- Django
-- Django ORM
-- SQLite (desenvolvimento local)
-- PostgreSQL (produção – Render)
-- Bootstrap 5
-- Chart.js
-- HTML e CSS
+---
 
-## Funcionalidades Implementadas
+# 📸 Preview do Sistema
 
-### Autenticação
-- Cadastro de usuários
-- Login e logout
-- Recuperação de senha
-- Proteção de rotas utilizando autenticação do Django
+## 📊 Dashboard
+![Dashboard](images/dashboard.jpeg)
 
-### Dashboard
-- Exibição do nível e XP do usuário
-- Barra de progresso até o próximo nível
-- Gráfico de XP ganho por dia
-- Histórico de ações realizadas
-- Sugestões de trilhas de aprendizado
+## 🏢 Dashboard de Empresas
+![Dashboard Empresas](images/dashboard_empresas.jpeg)
 
-### Missões e Subtarefas
-- Criação de missões diárias e semanais
-- Associação de missões a trilhas temáticas
-- Criação de subtarefas com valor de XP definido
-- Conclusão de subtarefas com ganho automático de XP
+## 👥 Dashboard da Equipe
+![Dashboard Equipe](images/dashboard_equipe.jpeg)
 
-### Gamificação
-- Sistema de XP e níveis
-- Evolução progressiva do usuário
-- Conquistas iniciais
-- Estatísticas personalizadas:
-  - Técnica
-  - Criatividade
-  - Disciplina
-  - Liderança
+## 🎯 Sistema de Missões
+![Missões](images/missao.jpeg)
 
-### Meu Gotchi
-- Avatar representando o usuário
-- Exibição de nível, XP e estatísticas
-- Evolução visual do avatar conforme o nível alcançado
+## 👾 Meu Gotchi
+![Meu Gotchi](images/meugotchi.jpeg)
 
-## Como Executar o Projeto Localmente
+## 🌎 Comunidade
+![Comunidade](images/comunidade.jpeg)
 
-1. Criar e ativar o ambiente virtual:
-python -m venv .venv  
-.venv\Scripts\activate  
+---
 
-2. Instalar as dependências:
-pip install -r requirements.txt  
+# 🎯 Objetivo do Projeto
 
-3. Executar as migrações:
-python manage.py makemigrations  
-python manage.py migrate  
+O Venture Gotchi foi criado para demonstrar como técnicas de gamificação podem ser aplicadas em ambientes organizacionais para:
 
-4. Criar um superusuário (opcional):
-python manage.py createsuperuser  
+- aumentar engajamento de equipes  
+- incentivar produtividade  
+- estimular colaboração  
+- acompanhar progresso com dashboards interativos  
 
-5. Iniciar o servidor:
-python manage.py runserver  
+O sistema transforma tarefas em missões, recompensando os usuários conforme seu progresso.
 
-A aplicação estará disponível em:  
-http://127.0.0.1:8000/login/
+---
 
-## Checklist de Testes Manuais
+# ⚙️ Tecnologias Utilizadas
 
-- Cadastro de usuário
-- Login e logout
-- Criação de missão
-- Criação de subtarefas
-- Conclusão de subtarefas
-- Atualização de XP e nível
-- Atualização da barra de progresso
-- Registro no histórico
-- Atualização do gráfico de XP
-- Visualização da tela “Meu Gotchi”
+### Backend
+- Python  
+- Django  
 
-## Público-Alvo e Permissões
+### Banco de Dados
+- PostgreSQL  
 
-Usuário autenticado:
-- Criar missões e subtarefas
-- Concluir tarefas
-- Acompanhar progresso e evolução
+### Frontend
+- HTML  
+- CSS  
+- JavaScript  
 
-Administrador:
-- Gerenciar usuários por meio do Django Admin
+### Ferramentas
+- Django ORM  
+- Sistema de autenticação de usuários  
+- Templates Django  
 
-## Deploy
+---
 
-O projeto está preparado para deploy utilizando PostgreSQL em ambiente de produção (Render).
+# 🧩 Funcionalidades
 
-Variáveis de ambiente utilizadas:
-- SECRET_KEY
-- DEBUG
-- DATABASE_URL
+✔ Cadastro e autenticação de usuários  
+✔ Dashboard com métricas e progresso  
+✔ Sistema de missões e desafios  
+✔ Evolução do personagem virtual (Gotchi)  
+✔ Área de comunidade  
+✔ Dashboard de empresas  
+✔ Dashboard de equipes  
+✔ Sistema gamificado de produtividade  
 
-## Autores
+---
 
-Projeto desenvolvido por:
+# 🏗 Arquitetura do Projeto
 
-Jherika Pereira da Silva  
-Pericles Santos Silva Junior  
+O projeto segue a arquitetura padrão do Django, separando responsabilidades entre:
 
-Projeto acadêmico desenvolvido no curso de Python com Django, com foco em backend, organização de código e boas práticas de desenvolvimento web.
+- Models → estrutura e regras de dados  
+- Views → lógica da aplicação  
+- Templates → interface do usuário  
+- Static Files → estilos e scripts  
+
+---
+
+# ▶️ Como Rodar o Projeto
+
+### 1️⃣ Clonar o repositório
+
+git clone https://github.com/JherikaSilva/Projeto-Venture-Gotchi
+
+### 2️⃣ Entrar na pasta do projeto
+
+cd venture-gotchi
+
+### 3️⃣ Criar ambiente virtual
+
+python -m venv venv
+
+### 4️⃣ Ativar ambiente virtual
+
+Windows
+
+venv\Scripts\activate
+
+Mac / Linux
+
+source venv/bin/activate
+
+### 5️⃣ Instalar dependências
+
+pip install -r requirements.txt
+
+### 6️⃣ Configurar o banco de dados
+
+No arquivo settings.py, configure o PostgreSQL.
+
+### 7️⃣ Rodar as migrações
+
+python manage.py migrate
+
+### 8️⃣ Iniciar servidor
+
+python manage.py runserver
+
+Depois acesse no navegador:
+
+http://127.0.0.1:8000
+
+---
+
+# 📚 Aprendizados
+
+Durante o desenvolvimento deste projeto foram aplicados conhecimentos em:
+
+- desenvolvimento web com Django  
+- modelagem de banco de dados com PostgreSQL  
+- construção de dashboards  
+- lógica de gamificação  
+- organização de arquitetura backend  
+
+---
+
+# 👩‍💻 Autores
+
+Jherika Silva  
+Estudante de Análise e Desenvolvimento de Sistemas
+https://github.com/JherikaSilva
+
+Pericles Santos Silva Júnior
+Estudante de Análise e Desenvolvimento de Sistemas
+https://github.com/PericlesJunior1212
+---
+
+# 📌 Status do Projeto
+
+🚧 Projeto em evolução com melhorias contínuas.
+
+---
+
+# 📄 Licença
+
+Projeto desenvolvido para fins educacionais e portfolio
