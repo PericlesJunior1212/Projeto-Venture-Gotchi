@@ -160,9 +160,10 @@ Jherika Silva
 Estudante de Análise e Desenvolvimento de Sistemas
 https://github.com/JherikaSilva
 
-Pericles Santos Silva Júnior
+Pericles Santos Silva Junior 
 Estudante de Análise e Desenvolvimento de Sistemas
 https://github.com/PericlesJunior1212
+
 ---
 
 # 📌 Status do Projeto
