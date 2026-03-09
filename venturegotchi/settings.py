@@ -22,13 +22,9 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-dev-key-change-in-pro
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
-# Configuração de ALLOWED_HOSTS para Render
-ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
+DEBUG = False
+ALLOWED_HOSTS = ['seu-projeto.railway.app', '127.0.0.1', 'localhost']
 
-
-RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
-if RENDER_EXTERNAL_HOSTNAME:
-    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
 
 # Application definition
 INSTALLED_APPS = [
@@ -89,6 +85,7 @@ DATABASES = {
     'default': dj_database_url.config(
         default= os.environ.get('DATABASE_URL'),  # Fallback para SQLite
         conn_max_age=600
+        ssl_require=True
     )
 }
 
