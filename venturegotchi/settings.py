@@ -23,7 +23,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-dev-key-change-in-pro
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
 DEBUG = False
-ALLOWED_HOSTS = ['.railway.app', '127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ['postgres-production-1349.up.railway.app', '127.0.0.1', 'localhost']
 
 
 # Application definition
@@ -86,7 +86,7 @@ DATABASES = {
         default= os.environ.get('DATABASE_URL'),  # Fallback para SQLite
         conn_max_age=600
         ssl_require=False
-    )ajustae
+    )
 }
 
 # Password validation
@@ -161,7 +161,7 @@ LOGIN_REDIRECT_URL = "dashboard"
 LOGOUT_REDIRECT_URL = "login"
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://*.railway.app",
+    "postgres-production-1349.up.railway.app",
 ]
 
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
