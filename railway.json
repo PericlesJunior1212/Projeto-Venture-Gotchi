@@ -1,0 +1,10 @@
+{
+  "$schema": "https://railway.app/railway.schema.json",
+  "build": {
+    "buildCommand": "bash build.sh"
+  },
+  "deploy": {
+    "startCommand": "gunicorn venturegotchi.wsgi",
+    "restartPolicyType": "ON_FAILURE"
+  }
+}
