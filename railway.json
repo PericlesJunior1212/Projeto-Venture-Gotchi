@@ -4,7 +4,7 @@
     "buildCommand": "bash build.sh"
   },
   "deploy": {
-    "startCommand": "gunicorn venturegotchi.wsgi",
+    "startCommand":  "python manage.py migrate && gunicorn venturegotchi.wsgi",
     "restartPolicyType": "ON_FAILURE"
   }
 }
