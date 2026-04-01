@@ -23,7 +23,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', '12345678')
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
 DEBUG = False
-ALLOWED_HOSTS = ['postgres-production-1349.up.railway.app', '127.0.0.1', 'localhost']
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='127.0.0.1,localhost').split(',')
 
 
 # Application definition
