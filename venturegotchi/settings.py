@@ -18,7 +18,12 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-build-fallback-key-xy
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = os.environ.get('.railway.app,projeto-venture-gotchi-production.up.railway.app', '127.0.0.1,localhost').split(',')
+ALLOWED_HOSTS = [
+    'projeto-venture-gotchi-production.up.railway.app',
+    '.railway.app',
+    '127.0.0.1',
+    'localhost',
+]
 
 # Application definition
 INSTALLED_APPS = [
